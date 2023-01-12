@@ -5,16 +5,20 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
 import { store } from './app/store';
+// css import
+import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 // import components
+import App from './App';
 import Layout from './components/Layout';
 import PageTransitionLoader from './components/PageTransLoader';
 // lazy load components
 const Login = React.lazy(() => import('./pages/Login'));
-const Register = React.lazy(() => import('./pages/Register'));
+const Register = React.lazy(() => import('./pages/Register/Register'));
+
 
 // create container 
 const container = document.getElementById('root');
@@ -33,7 +37,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "register",
+        path: "accounts/authorization/register",
         element: 
           <Suspense fallback={<PageTransitionLoader className="z-10" />}>
             <Register />
@@ -41,7 +45,7 @@ const router = createBrowserRouter([
         // loader: redirectIfUser,
       },
       {
-        path: "login",
+        path: "accounts/authorization/login",
         element: 
           <Suspense fallback={<PageTransitionLoader className="z-10" />}>
             <Login />
@@ -60,6 +64,7 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <RouterProvider router={router} />
+      <ToastContainer />
     </Provider>
   </React.StrictMode>
 );
