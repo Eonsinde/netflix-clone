@@ -18,17 +18,17 @@ const Layout = () => {
                 <div className='nav_contents flex items-center justify-between'>
                     <img className='cursor-pointer w-20 md:w-36' src={nfLogo} alt="netflix logo" />
                     {
-                        location.pathname === '/login'
+                        location.pathname.includes('login')
                         ?
                         <Link
-                            to='/register'
+                            to='accounts/authorization/register'
                             className="bg-red-600 text-[.9rem] py-2 px-3 md:py-3 md:px-5 text-white"
                         >
                             Sign Up
                         </Link>
                         :
                         <Link
-                            to='/login'
+                            to='accounts/authorization/login'
                             className="bg-red-600 text-[.9rem] py-2 px-3 md:py-3 md:px-5 text-white"
                         >
                             Sign In
@@ -36,6 +36,8 @@ const Layout = () => {
                     }
                 </div>
             </nav>
+
+            {/* render children or sub-components */}
             <Outlet />
 
             <div className='absolute h-full w-full bg-gradient-to-b from-app-dark to-[#0000007e]' />
