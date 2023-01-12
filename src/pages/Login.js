@@ -53,9 +53,9 @@ const Login = () => {
 
     return (
         <section
-            className='z-10 px-10'
+            className='z-10 px-3 md:px-10'
         >
-            <form onSubmit={SubmitForm(handleSubmit)} className='flex flex-col space-y-8 bg-[#000000ad] p-12 w-[100%] sm:w-[400px] md:w-[400px] lg:w-[500px] rounded-sm'>
+            <form onSubmit={SubmitForm(handleSubmit)} className='flex flex-col space-y-8 bg-[#000000ad] p-6 md:p-12 w-[90vw] sm:w-[400px] md:w-[400px] lg:w-[500px] rounded-sm'>
                 <h1 className='text-white text-2xl md:text-3xl font-semibold'>Sign In</h1>
                 <div className=''>
                     <div className="mb-4">

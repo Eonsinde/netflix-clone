@@ -31,8 +31,8 @@ const FinalStep = ({ prevStep, formdata }) => {
     }
 
     return ( 
-        <section className='z-10 px-10 text-white'>
-            <div className='flex flex-col space-y-8 bg-[#000000ad] p-12 w-[100%] sm:w-[400px] md:w-[400px] lg:w-[500px] rounded-sm'>
+        <section className='z-10 px-3 md:px-10 text-white'>
+            <div className='flex flex-col space-y-8 bg-[#000000ad] p-6 md:p-12 w-[90vw] sm:w-[400px] md:w-[400px] lg:w-[500px] rounded-sm'>
                 <h2 className='text-1xl md:text-2xl font-semibold'>Are contented with your details</h2>
                 <main className='flex flex-col space-y-4'>
                     <p>{formdata.email}</p>
