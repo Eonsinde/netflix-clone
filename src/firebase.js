@@ -1,4 +1,4 @@
-import firebase from 'firebase/app'
+import { initializeApp  } from 'firebase/app'
 import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -14,7 +14,7 @@ const firebaseConfig = {
     measurementId: "G-VNMBETCRS8"
   }; 
 
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
 
 const projectDatabase = getFirestore(firebaseApp);
 const projectAuth = getAuth()
