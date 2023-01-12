@@ -15,4 +15,5 @@
 body{
   @apply bg-app-dark;
   font-family: 'Roboto', sans-serif !important;
+  overflow-x: hidden;
 }
