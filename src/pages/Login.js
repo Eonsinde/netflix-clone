@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from "react-hook-form";
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { toast } from 'react-toastify';
+import { projectAuth } from '../firebase';
 
 
 const Login = () => {
@@ -23,30 +26,56 @@ const Login = () => {
     }
     
     const handleSubmit = () => {
-        alert("Submitting Form Data");
+        signInWithEmailAndPassword(projectAuth, formData.email, formData.password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                console.log(user)
+            })
+            .catch((error) => {
+                console.error(error);
+
+                const errorCode = error.code;
+                const errorMessage = error.message;
+
+                toast.error(`${errorMessage ? errorMessage : 'Authentication failed 😢'}`, {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+            });
     }
 
     return (
         <section
             className='z-10 px-10'
         >
-            <header className="flex flex-col space-y-4 mb-4 text-white">
-            </header>
             <form onSubmit={SubmitForm(handleSubmit)} className='flex flex-col space-y-8 bg-[#000000ad] p-12 w-[100%] sm:w-[400px] md:w-[400px] lg:w-[500px] rounded-sm'>
                 <h1 className='text-white text-2xl md:text-3xl font-semibold'>Sign In</h1>
                 <div className=''>
                     <div className="mb-4">
                         <input
-                            {...RegisterField("email", {required: true, maxLength: 50})}
+                            {...RegisterField("email", { required: true, pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ })}
                             type="text" 
                             className={`bg-[#333] w-full text-[0.9rem] p-3 text-white outline-none rounded-sm ${errors.email?.type === 'required' ? 'border-b-2 border-[#e87c03]' : ''}`}
                             onChange={handleChange}
                             placeholder="Email Address"
                         />
-                        {errors.email?.type === 'required'
+                        {errors.email?.type === 'required' || errors.email?.type === 'pattern'
                             ? 
                                 <small className='block mt-2 pl-1 text-md italic text-[#e87c03]'>
-                                    The email field is required
+                                    {
+                                        errors.email?.type === 'required'
+                                        ?
+                                        'The email field is required'
+                                        :
+                                        'Email address is not valid'
+                                    }
                                 </small>
                             : 
                             <></> 
@@ -54,7 +83,7 @@ const Login = () => {
                     </div>
                     <div className="">
                         <input
-                            {...RegisterField("password", {required: true, maxLength: 50})}
+                            {...RegisterField("password", {required: true})}
                             type="password" 
                             className={`bg-[#333] w-full text-[0.9rem] p-3 text-white outline-none rounded-sm ${errors.password?.type === 'required' ? 'border-b-2 border-[#e87c03]' : ''}`}
                             onChange={handleChange}
