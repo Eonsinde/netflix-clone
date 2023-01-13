@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { toast } from 'react-toastify';
+import { login, reset } from '../reducers/auth/authSlice';
 import { projectAuth } from '../firebase';
+import LoadingDots from '../components/LoadingDots';
 
 
 const Login = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const dispatch  = useDispatch();
+
+    const from = location.state?.from?.pathname;
+    const { user, message, loginSuccess, isLoading, isError } = useSelector(state => state.auth);
+
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -18,6 +28,31 @@ const Login = () => {
         document.title = "Netflix Clone | Login"
     }, []);
 
+    useEffect(() => {
+        if (isError){
+            toast.error(`${message}`, {
+                position: "bottom-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            
+            dispatch(reset());
+        }
+
+        if (loginSuccess){
+            if (from) // navigate to protected view 
+                navigate(from, { replace: true });
+            console.log(user);
+            // toast.success(`Logged In: Welcome ${user}`);
+            dispatch(reset());
+        }
+    }, [user, message, loginSuccess, isLoading, isError]);
+
     const handleChange = e => {
         setFormData(prevState => ({
             ...prevState,
@@ -26,29 +61,31 @@ const Login = () => {
     }
     
     const handleSubmit = () => {
-        signInWithEmailAndPassword(projectAuth, formData.email, formData.password)
-            .then((userCredential) => {
-                // Signed in 
-                const user = userCredential.user;
-                console.log(user)
-            })
-            .catch((error) => {
-                console.error(error);
+        // signInWithEmailAndPassword(projectAuth, formData.email, formData.password)
+        //     .then((userCredential) => {
+        //         // Signed in 
+        //         const user = userCredential.user;
+        //         console.log(user);
+        //     })
+        //     .catch((error) => {
+        //         // const errorCode = error.code;
+        //         const errorMessage = error.message;
+        //         // console.error(typeof errorMessage, errorCode);
 
-                const errorCode = error.code;
-                const errorMessage = error.message;
+        //         const respMessage = errorMessage.includes('user-not-found') ? "Account not found 🙂" : "Authentication failed 😢"
 
-                toast.error(`${errorMessage ? errorMessage : 'Authentication failed 😢'}`, {
-                    position: "bottom-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                });
-            });
+        //         toast.error(`${respMessage}`, {
+        //             position: "bottom-center",
+        //             autoClose: 5000,
+        //             hideProgressBar: false,
+        //             closeOnClick: true,
+        //             pauseOnHover: true,
+        //             draggable: true,
+        //             progress: undefined,
+        //             theme: "dark",
+        //         });
+        //     });
+        dispatch(login(formData));
     }
 
     return (
@@ -99,10 +136,14 @@ const Login = () => {
                         } 
                     </div>
                 </div>
-                <button className="w-full bg-red-600 text-white text-center text-[.9rem] py-2 px-3 md:py-3 md:px-5 rounded-sm">Sign In</button>
-                <div className='font-semibold'>
-                    <span className='text-[#999999]'>New to Netflix?</span>{' '}
-                    <Link to="/register" className='text-white hover:underline'>Sign up now</Link>
+                <button 
+                    className={`w-full ${isLoading ? 'opacity-60' : ''} bg-red-600 text-white text-center text-[.9rem] py-2 px-3 md:py-3 md:px-5 rounded-sm`}
+                >
+                    { isLoading ? <LoadingDots /> : <>Sign In</> }
+                </button>
+                <div className='font-semibold '>
+                    <span className='text-[#999999] text-[0.9rem] md:text-[1rem]'>New to Netflix?</span>{' '}
+                    <Link to="/accounts/authorization/register" className='text-white text-[0.9rem] md:text-[1rem] hover:underline'>Sign up now</Link>
                 </div>
             </form>
         </section>
