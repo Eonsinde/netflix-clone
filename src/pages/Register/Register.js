@@ -15,7 +15,7 @@ const Register = () => {
     });
 
     useEffect(() => {
-        document.title = "Netflix Clone | Register"
+        document.title = "Netflix Clone | Account | Register"
     }, []);
 
     const handleChange = e => {

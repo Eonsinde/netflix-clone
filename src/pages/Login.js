@@ -2,10 +2,8 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from "react-hook-form";
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import { login, reset } from '../reducers/auth/authSlice';
-import { projectAuth } from '../firebase';
 import LoadingDots from '../components/LoadingDots';
 
 
@@ -25,7 +23,7 @@ const Login = () => {
     const { register:RegisterField, handleSubmit:SubmitForm, formState: { errors } } = useForm(); // form validation
 
     useEffect(() => {
-        document.title = "Netflix Clone | Login"
+        document.title = "Netflix Clone | Account | Login"
     }, []);
 
     useEffect(() => {
@@ -40,18 +38,27 @@ const Login = () => {
                 progress: undefined,
                 theme: "dark",
             });
-            
+
             dispatch(reset());
         }
 
         if (loginSuccess){
             if (from) // navigate to protected view 
                 navigate(from, { replace: true });
-            console.log(user);
-            // toast.success(`Logged In: Welcome ${user}`);
+            toast.success(`Welcome ${user.email}`, {
+                position: "bottom-center",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            
             dispatch(reset());
         }
-    }, [user, message, loginSuccess, isLoading, isError]);
+    }, [user, message, loginSuccess, isLoading, isError, navigate, dispatch]);
 
     const handleChange = e => {
         setFormData(prevState => ({
@@ -61,30 +68,6 @@ const Login = () => {
     }
     
     const handleSubmit = () => {
-        // signInWithEmailAndPassword(projectAuth, formData.email, formData.password)
-        //     .then((userCredential) => {
-        //         // Signed in 
-        //         const user = userCredential.user;
-        //         console.log(user);
-        //     })
-        //     .catch((error) => {
-        //         // const errorCode = error.code;
-        //         const errorMessage = error.message;
-        //         // console.error(typeof errorMessage, errorCode);
-
-        //         const respMessage = errorMessage.includes('user-not-found') ? "Account not found 🙂" : "Authentication failed 😢"
-
-        //         toast.error(`${respMessage}`, {
-        //             position: "bottom-center",
-        //             autoClose: 5000,
-        //             hideProgressBar: false,
-        //             closeOnClick: true,
-        //             pauseOnHover: true,
-        //             draggable: true,
-        //             progress: undefined,
-        //             theme: "dark",
-        //         });
-        //     });
         dispatch(login(formData));
     }
 

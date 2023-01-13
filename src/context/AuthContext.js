@@ -1,9 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, useLocation,  } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { reset } from '../reducers/auth/authSlice'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { toast } from 'react-toastify';
+import { projectAuth } from '../firebase'
+import { logout, reset, setUser } from '../reducers/auth/authSlice'
 
 
 const queryClient = new QueryClient();
@@ -14,11 +15,35 @@ export const useAuth = () => {
 }
 
 const AuthProvider = ({ children }) => {
-    const { user, message } = useSelector(state => state.auth);
-    // console.log(user)
-    
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const unsubscribe = projectAuth.onAuthStateChanged((userAuth) => {
+            if (userAuth) {
+                const formattedUser = {
+                    uid: userAuth.uid,
+                    displayName: userAuth.displayName,
+                    email: userAuth.email,
+                    emailVerified: userAuth.emailVerified,
+                    phoneNumber: userAuth.phoneNumber,
+                    photoURL: userAuth.photoURL,
+                    isAnonymous: userAuth.isAnonymous,
+                    metadata: {
+                        creationAt: userAuth.metadata.creationTime,
+                        lastLogin: userAuth.metadata.lastSignInTime,
+                    }
+                }
+                dispatch(setUser(formattedUser));
+            } else {
+                dispatch(logout(null));
+            }
+        })
+
+        return unsubscribe;
+    }, []);
+
     const contextData = {
-        user,
+
     };
 
     return ( 
@@ -30,14 +55,14 @@ const AuthProvider = ({ children }) => {
     );
 }
 
-export const ProtectedView = ({ Component }) => {
+export const ProtectedView = ({ children }) => {
     const location = useLocation();
-    const { user } = useAuth();
+    const { user } = useSelector(state => state.auth);
 
     if (!user)
         return <Navigate to='/accounts/authorization/login' state={{from: location}} replace />;
     return ( 
-        <Component />
+        <>{children}</>
     );
 }
  

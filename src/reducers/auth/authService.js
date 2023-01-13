@@ -1,11 +1,10 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { projectAuth } from '../../firebase';
 
 
 // regsiter user
 const register = async (formdata) => {
     const response = await createUserWithEmailAndPassword(projectAuth, formdata.email, formdata.password)
-    console.log("Register action:", response);
 
     if (response.data){
         // dont't generate token for user
@@ -18,14 +17,32 @@ const register = async (formdata) => {
 
 const login = async (formdata) => {
     const response = await signInWithEmailAndPassword(projectAuth, formdata.email, formdata.password)
-    console.log("Login action:", response);
 
-    if (response.data){
-        const user = response.data.user;
-        console.log('User:', user);
+    if (response){
+        const formattedUser = {
+            uid: response.user.uid,
+            displayName: response.user.displayName,
+            email: response.user.email,
+            emailVerified: response.user.emailVerified,
+            phoneNumber: response.user.phoneNumber,
+            photoURL: response.user.photoURL,
+            isAnonymous: response.user.isAnonymous,
+            metadata: {
+                creationAt: response.user.metadata.creationTime,
+                lastLogin: response.user.metadata.lastSignInTime,
+            }
+        }
+
+        // console.log('User:', formattedUser);
 
         const payload = {
-            user
+            user: formattedUser,
+            // authTokens: {
+            //     refreshToken: response.user.stsTokenManager.refreshToken,
+            //     accessToken: response.user.stsTokenManager.accessToken,
+            //     expirationTime: response.user.stsTokenManager.expirationTime,
+            //     isExpired: response.user.stsTokenManager.isExpired
+            // }
         };
 
         return payload;
@@ -35,7 +52,12 @@ const login = async (formdata) => {
 }
 
 const logout = async () => {
-    localStorage.removeItem('auth_tokens');
+    const response = await signOut(projectAuth);
+    
+    if (response) {
+        return "Sign out successful"
+    }
+    return { message: "failure" };
 }
 
 

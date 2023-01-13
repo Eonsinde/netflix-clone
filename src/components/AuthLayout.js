@@ -1,10 +1,18 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import nfLogo from "../assets/netflix_no_bg.webp"
 
 
 const AuthLayout = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { user } = useSelector(state => state.auth);
 
+    console.log(user)
+
+
+    if (user)
+        navigate('/');
     return (
         <section
             className='bg-neutral-900 relative h-screen w-screen flex justify-center items-center gap-y-10 object-contain'

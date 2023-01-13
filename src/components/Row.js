@@ -7,6 +7,7 @@ const Row = ({ title, fetchUrl, isLargeRow }) => {
     const [movies, setMovies] = useState([]);
 
     const base_img_url = "https://image.tmdb.org/t/p/original/";
+    // console.log(movies);
 
     useEffect(() => {
         async function fetchData() {
@@ -16,7 +17,6 @@ const Row = ({ title, fetchUrl, isLargeRow }) => {
         }
 
         fetchData();
-
     }, [fetchUrl])
 
     return (
@@ -33,6 +33,7 @@ const Row = ({ title, fetchUrl, isLargeRow }) => {
                         isLargeRow ? movie.poster_path : movie.backdrop_path
                         }`} 
                         alt={`${movie.name}`} 
+                        title={`${movie.name}`}
                     />)
                 ))}
             </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import nfLogo from "../assets/netflix_no_bg.webp"
 import nfAvatar from "../assets/Netflix-avatar.png"
 
@@ -23,8 +24,12 @@ function Nav() {
     return (
         <div className={`nav ${show ? 'bg-app-dark shadow-md' : ''} fixed top-0 w-full py-6 px-3 md:px-8 z-10 transition-all ease-in`}>
             <div className='nav_contents flex items-center justify-between'>
-                <img className='cursor-pointer w-20 md:w-36' src={nfLogo} alt="netflix logo" />
-                <img className='cursor-pointer w-6 md:w-9' src={nfAvatar} alt="netflix logo" />
+                <Link to='/'>
+                    <img className='cursor-pointer w-20 md:w-36' src={nfLogo} alt="netflix logo" />
+                </Link>
+                <Link to='/profile' className=''>
+                    <img className='cursor-pointer w-6 md:w-9' src={nfAvatar} alt="netflix logo" />
+                </Link>
             </div>
         </div>
     )

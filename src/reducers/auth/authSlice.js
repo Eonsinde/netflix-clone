@@ -20,16 +20,12 @@ export const register = createAsyncThunk('auth/register', async (formdata, thunk
       return await authService.register(formdata);
   } catch (error) {
       // handle server errors
-      // like already existing email, username and reg_no
-      // const message = (
-      //     (error.response && error.response.data && error.response.data.reg_no && error.response.data.reg_no[0]) ||
-      //     (error.response && error.response.data && error.response.data.email && error.response.data.email[0]) ||
-      //     (error.response && error.response.data && error.response.data.username && error.response.data.username[0]) ||
-      //     (error.response && error.response.data && error.response.data.level && `Level: ${error.response.data.level[0]}`) ||
-      //     (error && String(error) === "Error: Network Error" && "Try Again: Network Issues")
-      // );
-      console.log("register error: ", error.message);
-      const message = error && String(error);
+      const message = (
+        (error.message && error.message.includes('email-already-in-use') && "Email already taken 😒") ||
+        (error.message && error.message.includes('network-request-failed') && "No Internet Connection 🥱") || 
+        (error && (String(error) === "Error: Network Error") && "Try Again: Network Issues")
+      );
+      // console.log("register error: ", error.message);
       
       return thunkAPI.rejectWithValue(message);
   }
@@ -39,21 +35,28 @@ export const login = createAsyncThunk('auth/login', async (formdata, thunkAPI) =
   try{
     return await authService.login(formdata);
   } catch (error) {
-    const message = (error.message && error.message.includes('user-not-found') && "Account not found 🙂") ||
-                    (error.message && error.message.includes('wrong-password') && "Wrong Password 🙂") || 
-                    (error.message && error.message.includes('network-request-failed') && "No Internet Connection 🥱") || 
-                    (error && String(error) === "Error: Network Error" && "Try Again: Network Issues");
-    console.log("login error: ", error.message);
-    // const message = error && String(error);
+    const message = (
+      (error.message && error.message.includes('user-not-found') && "Account not found 🙂") ||
+      (error.message && error.message.includes('wrong-password') && "Wrong Password 🙂") || 
+      (error.message && error.message.includes('network-request-failed') && "No Internet Connection 🥱") || 
+      (error && (String(error) === "Error: Network Error") && "Try Again: Network Issues")
+    );
+    // console.log("login error: ", error.message);
+
     return thunkAPI.rejectWithValue(message);
   }
 });
 
-export const logout = createAsyncThunk('auth/logout', async () => {
+export const logout = createAsyncThunk('auth/logout', async (formdata, thunkAPI) => {
   try{
       return await authService.logout();
   } catch (error) { 
-      // return thunkAPI.rejectWithValue("Error with registration");
+    const message = (
+      (error.message && error.message.includes('network-request-failed') && "No Internet Connection 🥱") || 
+      (error && (String(error) === "Error: Network Error") && "Try Again: Network Issues")
+    );
+      
+    return thunkAPI.rejectWithValue(message);
   }
 });
 
@@ -63,6 +66,9 @@ export const authSlice = createSlice({
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
     reset: (state) => {
       state.message = '';
       state.registerSuccess = false;
@@ -103,7 +109,7 @@ export const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
           state.isLoading = false;
           state.isError = true;
-          state.message = action.payload;
+          state.message = action.payload; // msg => from thunkAPI.rejectwithvalue(msg)
           state.user = null;
       })
 
@@ -111,22 +117,22 @@ export const authSlice = createSlice({
       .addCase(logout.pending, state => {
           state.isLoading = true;
       })
-      .addCase(logout.fulfilled, state => {
+      .addCase(logout.fulfilled, (state, action) => {
           state.isLoading = false;
-          state.logoutSuccess = true;
+          // state.logoutSuccess = true;
           state.user = null;
-          state.message = "Logout Successful";
+          state.message = action.payload;
       })
-      .addCase(logout.rejected, state => {
+      .addCase(logout.rejected, (state, action) => {
           state.isLoading = false;
           state.isError = true;
-          state.message = "Failed to log out";
+          state.message = action.payload;
           state.user = null;
       })
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { setUser, reset } = authSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

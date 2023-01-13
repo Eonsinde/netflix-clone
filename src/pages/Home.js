@@ -1,15 +1,17 @@
 import React from 'react'
 import Banner from '../components/Banner'
-import Nav from '../components/Nav'
 import Row from '../components/Row'
 import requests from '../requests'
 
 
 
-export default function HomeScreen() {
+export default function Home() {
+  React.useEffect(() => {
+    document.title = 'Netflix Clone | Movies';
+  }, []);
+
   return (
     <div>
-        <Nav />
         <Banner />
         {/* Row */}
         <section className='py-5 px-3 md:px-8'>

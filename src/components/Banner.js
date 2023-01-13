@@ -40,9 +40,9 @@ export default function Banner() {
               <button className='bg-neutral-800 border-none text-white text-[1rem] outline-none border-r-2 py-[0.2rem] md:py-[0.5rem] px-[1rem] md:px-[2rem] hover:bg-white hover:text-[#000] transition-all ease-in'>Play</button>
               <button className='bg-neutral-800 border-none text-white text-[1rem] outline-none border-r-2 py-[0.2rem] md:py-[0.5rem] px-[1rem] md:px-[2rem] hover:bg-white hover:text-[#000] transition-all ease-in'>My List</button>
           </div>
-          <h1 className='w-full md:w-[30rem] leading-5 text-[1rem]'>
+          <p className='w-full md:w-[30rem] leading-5 text-[1.1rem] lg:text-[1.2rem]'>
             {truncate(movie?.overview, 150)}
-          </h1>
+          </p>
       </div>
 
       <div className='h-[7.4rem] bg-gradient-to-b from-transparent to-app-dark' />
