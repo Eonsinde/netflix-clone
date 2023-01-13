@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 
 
 const Step01 = ({ nextStep, formdata, handleChange }) => {
-    console.log(formdata)
     const { register:RegisterField, handleSubmit:SubmitForm, formState: { errors } } = useForm(); // form validation
 
     const handleSubmit = () => {
